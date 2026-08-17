@@ -1,20 +1,19 @@
 require("dotenv").config();
 
-const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
+const app = require("./app");
 
-const client = new MongoClient(process.env.MONGODB_URI);
+const PORT = 5000;
 
-async function connectDB() {
-    try {
-        await client.connect();
-        console.log("✅ MongoDB connected successfully!");
+mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => {
+        console.log("MongoDB connected successfully!");
 
-        const db = client.db("fullstackdb");
-        console.log("Database:", db.databaseName);
-
-    } catch (error) {
-        console.error("❌ MongoDB connection failed:", error);
-    }
-}
-
-connectDB();
+        app.listen(PORT, () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error("MongoDB connection failed:", error);
+    });
